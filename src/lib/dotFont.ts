@@ -8,6 +8,7 @@ const FONT: Record<string, number[]> = {
   " ": [0, 0, 0, 0, 0, 0, 0],
   ".": [0, 0, 0, 0, 0, 0x0c, 0x0c],
   "-": [0, 0, 0, 0x1f, 0, 0, 0],
+  "+": [0x00, 0x04, 0x04, 0x1f, 0x04, 0x04, 0x00],
   A: [0x0e, 0x11, 0x11, 0x1f, 0x11, 0x11, 0x11],
   B: [0x1e, 0x11, 0x11, 0x1e, 0x11, 0x11, 0x1e],
   C: [0x0e, 0x11, 0x10, 0x10, 0x10, 0x11, 0x0e],
@@ -65,4 +66,23 @@ export function buildMask(text: string, cols: number, center = false): Uint8Arra
     x += ADVANCE;
   }
   return mask;
+}
+
+// Builds one long strip of text for scrolling displays (7 rows tall).
+export function buildStrip(text: string): { cols: number; mask: Uint8Array } {
+  const cols = text.length * ADVANCE;
+  const mask = new Uint8Array(cols * GLYPH_H);
+  let x = 0;
+  for (const ch of text) {
+    const glyph = FONT[ch] ?? FONT[" "];
+    for (let r = 0; r < GLYPH_H; r++) {
+      for (let c = 0; c < GLYPH_W; c++) {
+        if (glyph[r] & (1 << (GLYPH_W - 1 - c))) {
+          mask[r * cols + x + c] = 1;
+        }
+      }
+    }
+    x += ADVANCE;
+  }
+  return { cols, mask };
 }

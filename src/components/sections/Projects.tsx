@@ -140,6 +140,18 @@ export default function Projects() {
                     </span>
                   </span>
 
+                  {project.status && (
+                    <span
+                      aria-hidden="true"
+                      title={project.status}
+                      className={`h-[7px] w-[7px] shrink-0 self-center rounded-full ${
+                        project.status === "LIVE"
+                          ? "led-pulse bg-ink"
+                          : "border border-graphite"
+                      }`}
+                    />
+                  )}
+
                   {project.year && (
                     <span className="mono shrink-0 text-[11px] tracking-[0.12em] text-graphite">
                       {project.year}
